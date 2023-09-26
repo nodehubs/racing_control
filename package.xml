@@ -18,8 +18,8 @@
 
   <exec_depend>hobot_codec</exec_depend>
   <exec_depend>websocket</exec_depend>
-  <exec_depend>racing_obstacle_detection</exec_depend>
-  <exec_depend>racing_track_detection</exec_depend>
+  <exec_depend>tros_racing_obstacle_detection_yolo</exec_depend>
+  <exec_depend>tros_racing_track_detection_resnet</exec_depend>
   
 
   <test_depend>ament_lint_auto</test_depend>
