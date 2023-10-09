@@ -32,6 +32,9 @@ RacingControlNode::RacingControlNode(const std::string& node_name,const rclcpp::
   this->declare_parameter<float>("avoid_linear_speed", avoid_linear_speed_);
   this->get_parameter<float>("avoid_linear_speed", avoid_linear_speed_);
 
+  this->declare_parameter<int>("bottom_threshold", bottom_threshold_);
+  this->get_parameter<int>("bottom_threshold", bottom_threshold_);
+
   point_subscriber_ =
     this->create_subscription<geometry_msgs::msg::PointStamped>(
       "racing_track_center_detection",
@@ -90,6 +93,7 @@ void RacingControlNode::subscription_callback_point(const geometry_msgs::msg::Po
 
 void RacingControlNode::subscription_callback_target(const ai_msgs::msg::PerceptionTargets::SharedPtr targets_msg){
   {
+    sub_target_ = true;
     std::unique_lock<std::mutex> lock(point_target_mutex_);
     targets_queue_.push(targets_msg);
     if (targets_queue_.size() > 100) {
@@ -105,7 +109,14 @@ void RacingControlNode::subscription_callback_target(const ai_msgs::msg::Percept
 void RacingControlNode::MessageProcess(){
   while(process_stop_ == false){
     std::unique_lock<std::mutex> lock(point_target_mutex_);
-    while (!point_queue_.empty() && !targets_queue_.empty()) {
+    if (!point_queue_.empty() && sub_target_ == false){
+      auto point_msg = point_queue_.top();
+      lock.unlock();
+      LineFollowing(point_msg);
+      lock.lock();
+      point_queue_.pop();
+    }
+    if (!point_queue_.empty() && !targets_queue_.empty() && sub_target_== true) {
       auto point_msg = point_queue_.top();
       auto targets_msg = targets_queue_.top();
       if (point_msg->header.stamp == targets_msg->header.stamp) {
@@ -115,7 +126,7 @@ void RacingControlNode::MessageProcess(){
         } else {
             for(const auto &target : targets_msg->targets){
               int bottom = target.rois[0].rect.y_offset + target.rois[0].rect.height;
-              if (bottom < 340){
+              if (bottom < bottom_threshold_){
                 LineFollowing(point_msg);
               } else {
                 ObstaclesAvoiding(target);
