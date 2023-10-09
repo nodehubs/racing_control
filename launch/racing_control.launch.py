@@ -33,7 +33,8 @@ def generate_launch_description():
         parameters=[
             {"pub_control_topic": "/racer_car/cmd_vel"},
             {"avoid_angular_ratio": 0.25},
-            {"avoid_linear_speed": 1.1}
+            {"avoid_linear_speed": 1.1},
+            {"bottom_threshold": 340}
         ],
         arguments=['--ros-args', '--log-level', 'warn']
     )
