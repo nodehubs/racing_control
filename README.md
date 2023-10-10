@@ -20,7 +20,7 @@ sudo apt update
 sudo apt install -y tros-racing-control
 ```
 
-**2.运行障碍物检测功能**
+**2.运行自动巡线与避障功能**
 
 ```shell
 source /opt/tros/local_setup.bash
