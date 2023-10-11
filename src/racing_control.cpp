@@ -35,6 +35,12 @@ RacingControlNode::RacingControlNode(const std::string& node_name,const rclcpp::
   this->declare_parameter<int>("bottom_threshold", bottom_threshold_);
   this->get_parameter<int>("bottom_threshold", bottom_threshold_);
 
+  this->declare_parameter<float>("follow_linear_speed", follow_linear_speed_);
+  this->get_parameter<float>("follow_linear_speed", follow_linear_speed_);
+
+  this->declare_parameter<float>("follow_angular_ratio", follow_angular_ratio_);
+  this->get_parameter<float>("follow_angular_ratio", follow_angular_ratio_);
+
   point_subscriber_ =
     this->create_subscription<geometry_msgs::msg::PointStamped>(
       "racing_track_center_detection",
@@ -158,8 +164,8 @@ void RacingControlNode::LineFollowing(const geometry_msgs::msg::PointStamped::Sh
     temp = 20;
   }
   auto twist_msg = geometry_msgs::msg::Twist();
-  float angular_z = -1.0 * temp / 150.0 * y / 224.0;
-  twist_msg.linear.x = 1.5;
+  float angular_z = follow_angular_ratio_ * temp / 150.0 * y / 224.0;
+  twist_msg.linear.x = follow_linear_speed_;
   twist_msg.linear.y = 0.0;
   twist_msg.linear.z = 0.0;
   twist_msg.angular.x = 0.0;
