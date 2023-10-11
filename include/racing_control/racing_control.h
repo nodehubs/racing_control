@@ -76,6 +76,8 @@ private:
     std::shared_ptr<std::thread> msg_process_;
     float avoid_angular_ratio_ = 1.1;
     float avoid_linear_speed_ = 0.25;
+    float follow_angular_ratio_ = -1.0;
+    float follow_linear_speed_ = 1.5;
     bool sub_target_ = false; 
     int bottom_threshold_ = 340;
 };

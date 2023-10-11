@@ -51,4 +51,6 @@ ros2 launch racing_control racing_control.launch.py
 | pub_control_topic    | string |    发布的控制消息名称，请根据实际发布的话题名称配置，默认值为/cmd_vel |
 | avoid_angular_ratio   | float | 避障时的角速度比例，请根据实际情况配置，默认值为1.1 |
 | avoid_linear_speed   | float | 避障时的线速度，请根据实际情况配置，默认值为0.25 |
+| follow_angular_ratio   | float | 巡线时的角速度比例，请根据实际情况配置，默认值为-1.0 |
+| follow_linear_speed   | float | 巡线时的线速度，请根据实际情况配置，默认值为1.5 |
 | bottom_threshold   | int | 触发避障功能的坐标阈值（目标底部坐标的y值），请根据实际情况配置，默认值为340 |
