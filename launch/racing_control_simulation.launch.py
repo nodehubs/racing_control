@@ -31,11 +31,11 @@ def generate_launch_description():
         executable='racing_control',
         output='screen',
         parameters=[
-            {"pub_control_topic": "/cmd_vel"},
+            {"pub_control_topic": "/racer_car/cmd_vel"},
             {"avoid_angular_ratio": 0.25},
             {"avoid_linear_speed": 1.1},
             {"follow_angular_ratio": -1.0},
-            {"follow_linear_speed": 0.1},
+            {"follow_linear_speed": 1.5},
             {"bottom_threshold": 340}
         ],
         arguments=['--ros-args', '--log-level', 'warn']

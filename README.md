@@ -24,6 +24,11 @@ sudo apt install -y tros-racing-control
 
 ```shell
 source /opt/tros/local_setup.bash
+
+# 仿真
+ros2 launch racing_control racing_control_simulation.launch.py
+
+# 实际场景
 ros2 launch racing_control racing_control.launch.py
 ```
 
@@ -36,7 +41,7 @@ ros2 launch racing_control racing_control.launch.py
 
 | 名称                          | 消息类型                                                     | 说明                                                   |
 | ----------------------------- | ------------------------------------------------------------ | ------------------------------------------------------ |
-| /racer_car/cmd_vel    | geometry_msgs/msg/Twist             | 发布小车控制消息                 |
+| /cmd_vel    | geometry_msgs/msg/Twist             | 发布小车控制消息                 |
 
 ### Sub话题
 | 名称                          | 消息类型                                                     | 说明                                                   |
