@@ -59,7 +59,6 @@ RacingControlNode::RacingControlNode(const std::string& node_name,const rclcpp::
 
   publisher_ =
     this->create_publisher<geometry_msgs::msg::Twist>(pub_control_topic_, 5);
-
   RCLCPP_INFO(rclcpp::get_logger("RacingControlNode"), "RacingControlNode initialized!");
 }
 
@@ -87,11 +86,8 @@ void RacingControlNode::subscription_callback_point(const geometry_msgs::msg::Po
   {
     std::unique_lock<std::mutex> lock(point_target_mutex_);
     point_queue_.push(point_msg);
-    if (point_queue_.size() > 100) {
+    if (point_queue_.size() > 1) {
       point_queue_.pop();
-      RCLCPP_WARN(rclcpp::get_logger("RacingControlNode"),
-                  "point_queue has cache point num > 100, drop the oldest "
-                  "point message");
     }
   }
   return;
@@ -102,11 +98,8 @@ void RacingControlNode::subscription_callback_target(const ai_msgs::msg::Percept
     sub_target_ = true;
     std::unique_lock<std::mutex> lock(point_target_mutex_);
     targets_queue_.push(targets_msg);
-    if (targets_queue_.size() > 100) {
+    if (targets_queue_.size() > 1) {
       targets_queue_.pop();
-      RCLCPP_WARN(rclcpp::get_logger("RacingControlNode"),
-                  "target_queue has cache target num > 100, drop the oldest "
-                  "target message");
     }
   }
   return;
@@ -125,31 +118,22 @@ void RacingControlNode::MessageProcess(){
     if (!point_queue_.empty() && !targets_queue_.empty() && sub_target_== true) {
       auto point_msg = point_queue_.top();
       auto targets_msg = targets_queue_.top();
-      if (point_msg->header.stamp == targets_msg->header.stamp) {
-        lock.unlock();
-        if(targets_msg->targets.size() == 0){
-          LineFollowing(point_msg);
-        } else {
-            for(const auto &target : targets_msg->targets){
-              int bottom = target.rois[0].rect.y_offset + target.rois[0].rect.height;
-              if (bottom < bottom_threshold_){
-                LineFollowing(point_msg);
-              } else {
-                ObstaclesAvoiding(target);
-              }
-            }
-        }
-        lock.lock();
-        point_queue_.pop();
-        targets_queue_.pop();
-      } else if ((point_msg->header.stamp.sec > targets_msg->header.stamp.sec) ||
-                  ((point_msg->header.stamp.sec == targets_msg->header.stamp.sec) &&
-                  (point_msg->header.stamp.nanosec >
-                    targets_msg->header.stamp.nanosec))) {
-        targets_queue_.pop();
+      lock.unlock();
+      if(targets_msg->targets.size() == 0){
+        LineFollowing(point_msg);
       } else {
-        point_queue_.pop();
+          for(const auto &target : targets_msg->targets){
+            int bottom = target.rois[0].rect.y_offset + target.rois[0].rect.height;
+            if (bottom < bottom_threshold_){
+              LineFollowing(point_msg);
+            } else {
+              ObstaclesAvoiding(target);
+            }
+          }
       }
+      lock.lock();
+      point_queue_.pop();
+      targets_queue_.pop();
     }
   }
 }
@@ -178,6 +162,11 @@ void RacingControlNode::ObstaclesAvoiding(const ai_msgs::msg::Target &target){
   auto twist_msg = geometry_msgs::msg::Twist();
   int center_x = target.rois[0].rect.x_offset + target.rois[0].rect.width / 2;
   float temp = center_x - 320.0;
+  if ((-20 < center_x ) && ( center_x < 0)) {
+    temp = -20;
+  } else if ((center_x > 0) && (center_x < 20)) {
+    temp = 20;
+  }
   float angular_z = avoid_angular_ratio_ * 700 / temp;
   twist_msg.linear.x = avoid_linear_speed_;
   twist_msg.linear.y = 0.0;
