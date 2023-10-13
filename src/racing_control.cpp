@@ -41,6 +41,9 @@ RacingControlNode::RacingControlNode(const std::string& node_name,const rclcpp::
   this->declare_parameter<float>("follow_angular_ratio", follow_angular_ratio_);
   this->get_parameter<float>("follow_angular_ratio", follow_angular_ratio_);
 
+  this->declare_parameter<float>("confidence_threshold", confidence_threshold_);
+  this->get_parameter<float>("confidence_threshold", confidence_threshold_);
+
   point_subscriber_ =
     this->create_subscription<geometry_msgs::msg::PointStamped>(
       "racing_track_center_detection",
@@ -56,7 +59,6 @@ RacingControlNode::RacingControlNode(const std::string& node_name,const rclcpp::
       std::bind(&RacingControlNode::subscription_callback_target,
       this,
       std::placeholders::_1)); 
-
   publisher_ =
     this->create_publisher<geometry_msgs::msg::Twist>(pub_control_topic_, 5);
   RCLCPP_INFO(rclcpp::get_logger("RacingControlNode"), "RacingControlNode initialized!");
@@ -127,7 +129,9 @@ void RacingControlNode::MessageProcess(){
             if (bottom < bottom_threshold_){
               LineFollowing(point_msg);
             } else {
-              ObstaclesAvoiding(target);
+              if(target.rois[0].confidence > confidence_threshold_){
+                ObstaclesAvoiding(target);
+              }
             }
           }
       }

@@ -32,11 +32,12 @@ def generate_launch_description():
         output='screen',
         parameters=[
             {"pub_control_topic": "/cmd_vel"},
-            {"avoid_angular_ratio": 0.25},
-            {"avoid_linear_speed": 1.1},
+            {"avoid_angular_ratio": 0.2},
+            {"avoid_linear_speed": 0.1},
             {"follow_angular_ratio": -1.0},
             {"follow_linear_speed": 0.1},
-            {"bottom_threshold": 340}
+            {"bottom_threshold": 200},
+            {"confidence_threshold": 0.5},
         ],
         arguments=['--ros-args', '--log-level', 'warn']
     )
