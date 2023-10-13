@@ -80,6 +80,7 @@ private:
     float follow_linear_speed_ = 1.5;
     bool sub_target_ = false; 
     int bottom_threshold_ = 340;
+    float confidence_threshold_ = 0.5;
 };
 
 

@@ -125,12 +125,14 @@ void RacingControlNode::MessageProcess(){
         LineFollowing(point_msg);
       } else {
           for(const auto &target : targets_msg->targets){
-            int bottom = target.rois[0].rect.y_offset + target.rois[0].rect.height;
-            if (bottom < bottom_threshold_){
-              LineFollowing(point_msg);
-            } else {
-              if(target.rois[0].confidence > confidence_threshold_){
-                ObstaclesAvoiding(target);
+            if(target.type == "construction_cone"){
+              int bottom = target.rois[0].rect.y_offset + target.rois[0].rect.height;
+              if (bottom < bottom_threshold_){
+                LineFollowing(point_msg);
+              } else {
+                if(target.rois[0].confidence > confidence_threshold_){
+                  ObstaclesAvoiding(target);
+                }
               }
             }
           }
