@@ -120,6 +120,8 @@ void RacingControlNode::MessageProcess(){
     if (!point_queue_.empty() && !targets_queue_.empty() && sub_target_== true) {
       auto point_msg = point_queue_.top();
       auto targets_msg = targets_queue_.top();
+      point_queue_.pop();
+      targets_queue_.pop();
       lock.unlock();
       if(targets_msg->targets.size() == 0){
         LineFollowing(point_msg);
@@ -138,8 +140,6 @@ void RacingControlNode::MessageProcess(){
           }
       }
       lock.lock();
-      point_queue_.pop();
-      targets_queue_.pop();
     }
   }
 }
