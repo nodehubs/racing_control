@@ -25,22 +25,45 @@ from ament_index_python import get_package_share_directory
 
 
 def generate_launch_description():
-
-    racing_control_node = Node(
-        package='racing_control',
-        executable='racing_control',
-        output='screen',
-        parameters=[
-            {"pub_control_topic": "/racer_car/cmd_vel"},
-            {"avoid_angular_ratio": 0.25},
-            {"avoid_linear_speed": 1.1},
-            {"follow_angular_ratio": -1.0},
-            {"follow_linear_speed": 1.5},
-            {"bottom_threshold": 340}
-        ],
-        arguments=['--ros-args', '--log-level', 'warn']
-    )
-
+    
     return LaunchDescription([
-        racing_control_node
+        DeclareLaunchArgument(
+            'avoid_angular_ratio',
+            default_value='0.25',
+            description='image subscribe topic name'),
+        DeclareLaunchArgument(
+            'avoid_linear_speed',
+            default_value='1.1',
+            description='image subscribe topic name'),
+        DeclareLaunchArgument(
+            'follow_angular_ratio',
+            default_value='-1.0',
+            description='image subscribe topic name'),
+        DeclareLaunchArgument(
+            'follow_linear_speed',
+            default_value='1.5',
+            description='image subscribe topic name'),
+        DeclareLaunchArgument(
+            'bottom_threshold',
+            default_value='340',
+            description='image subscribe topic name'),
+        DeclareLaunchArgument(
+            'confidence_threshold',
+            default_value='0.5',
+            description='image subscribe topic name'),
+        Node(
+            package='racing_control',
+            executable='racing_control',
+            output='screen',
+            parameters=[
+                {"pub_control_topic": "/racer_car/cmd_vel"},
+                {"avoid_angular_ratio": LaunchConfiguration('avoid_angular_ratio')},
+                {"avoid_linear_speed": LaunchConfiguration('avoid_linear_speed')},
+                {"follow_angular_ratio": LaunchConfiguration('follow_angular_ratio')},
+                {"follow_linear_speed": LaunchConfiguration('follow_linear_speed')},
+                {"bottom_threshold": LaunchConfiguration('bottom_threshold')},
+                {"confidence_threshold": LaunchConfiguration('confidence_threshold')},
+            ],
+            arguments=['--ros-args', '--log-level', 'warn']
+        )
     ])
