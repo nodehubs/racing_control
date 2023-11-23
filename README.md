@@ -28,8 +28,8 @@ source /opt/tros/local_setup.bash
 # 仿真
 ros2 launch racing_control racing_control_simulation.launch.py
 
-# 实际场景
-ros2 launch racing_control racing_control.launch.py
+# 实际场景（可在启动时通过命令行设置参数）
+ros2 launch racing_control racing_control.launch.py avoid_angular_ratio:=0.2 avoid_linear_speed:=0.1 follow_angular_ratio:=-1.0 follow_linear_speed:=0.1
 ```
 
 
