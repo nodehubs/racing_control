@@ -59,3 +59,4 @@ ros2 launch racing_control racing_control.launch.py avoid_angular_ratio:=0.2 avo
 | follow_angular_ratio   | float | 巡线时的角速度比例，请根据实际情况配置，默认值为-1.0 |
 | follow_linear_speed   | float | 巡线时的线速度，请根据实际情况配置，默认值为1.5 |
 | bottom_threshold   | int | 触发避障功能的坐标阈值（目标底部坐标的y值），请根据实际情况配置，默认值为340 |
+|confidence_threshold| float | 触发避障功能的障碍物置信度阈值，请根据实际情况配置，默认值为0.5|
